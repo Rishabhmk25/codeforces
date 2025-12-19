@@ -3,15 +3,15 @@ import subprocess
 import os
 
 def run_test():
-    # Compile user code
-    print("Compiling user code...")
-    res = subprocess.run(['g++', 'range.cpp', '-o', 'range'], capture_output=True, text=True)
+    # Compile FIXED user code (O(N^2) logic fix)
+    print("Compiling fixed user code (range_fixed_logic.cpp)...")
+    res = subprocess.run(['g++', 'range_fixed_logic.cpp', '-o', 'range_fixed'], capture_output=True, text=True)
     if res.returncode != 0:
-        print("User code compilation failed:", res.stderr)
+        print("Fixed code compilation failed:", res.stderr)
         return
 
-    # Compile correct solution
-    print("Compiling correct solution...")
+    # Compile correct optimal solution (O(N))
+    print("Compiling correct solution (range_solution.cpp)...")
     res = subprocess.run(['g++', 'range_solution.cpp', '-o', 'range_sol'], capture_output=True, text=True)
     if res.returncode != 0:
         print("Solution compilation failed:", res.stderr)
@@ -20,17 +20,17 @@ def run_test():
     # Test Case
     input_str = "1\n5\n0 0 0 100 1\n"
     
-    print("\nRunning user code with input:")
+    print("\nRunning fixed code with input:")
     print(input_str.strip())
     
-    # Run user code
+    # Run fixed code
     try:
-        p_user = subprocess.run(['./range'], input=input_str, capture_output=True, text=True, timeout=2)
-        user_out = p_user.stdout.strip()
+        p_fixed = subprocess.run(['./range_fixed'], input=input_str, capture_output=True, text=True, timeout=2)
+        fixed_out = p_fixed.stdout.strip()
     except subprocess.TimeoutExpired:
-        user_out = "TLE"
+        fixed_out = "TLE"
         
-    print("User Code Output:", user_out)
+    print("Fixed Code Output:", fixed_out)
 
     # Run correct solution
     try:
@@ -41,11 +41,11 @@ def run_test():
 
     print("Correct Output:", sol_out)
     
-    if user_out != sol_out:
+    if fixed_out != sol_out:
         print("\nMISMATCH FOUND!")
-        print(f"Expected {sol_out}, got {user_out}")
+        print(f"Expected {sol_out}, got {fixed_out}")
     else:
-        print("\nMatch (or both wrong/TLE).")
+        print("\nSUCCESS: Match found!")
 
 if __name__ == "__main__":
     run_test()
